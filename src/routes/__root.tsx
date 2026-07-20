@@ -7,12 +7,11 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { registerStudySharePwa } from "@/lib/pwa";
-import { StudyShareLogo } from "@/components/studyshare-logo";
 
 function NotFoundComponent() {
   return (
@@ -137,26 +136,11 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const [showIntro, setShowIntro] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
       void registerStudySharePwa();
     }
-  }, []);
-
-  useEffect(() => {
-    const key = "studyshare-intro-seen";
-    const seen = window.sessionStorage.getItem(key);
-    if (seen) return;
-
-    window.sessionStorage.setItem(key, "1");
-    setShowIntro(true);
-    const timeout = window.setTimeout(() => {
-      setShowIntro(false);
-    }, 1700);
-
-    return () => window.clearTimeout(timeout);
   }, []);
 
   return (
@@ -174,14 +158,6 @@ function RootComponent() {
         <div className="pointer-events-none fixed bottom-3 right-3 z-50 text-xs font-medium text-foreground/20">
           Made by Gaurav
         </div>
-
-        {showIntro ? (
-          <div className="intro-overlay fixed inset-0 z-[90] grid place-items-center bg-background/95">
-            <div className="intro-card glass-panel rounded-3xl px-8 py-7 shadow-2xl">
-              <StudyShareLogo iconClassName="h-14 w-14" textClassName="intro-text" />
-            </div>
-          </div>
-        ) : null}
       </div>
     </QueryClientProvider>
   );
