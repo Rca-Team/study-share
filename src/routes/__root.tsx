@@ -150,10 +150,10 @@ function RootComponent() {
     const seen = window.sessionStorage.getItem(key);
     if (seen) return;
 
+    window.sessionStorage.setItem(key, "1");
     setShowIntro(true);
     const timeout = window.setTimeout(() => {
       setShowIntro(false);
-      window.sessionStorage.setItem(key, "1");
     }, 1700);
 
     return () => window.clearTimeout(timeout);
