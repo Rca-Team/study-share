@@ -42,6 +42,7 @@ function HomePage() {
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
+  const [recentViewedIds, setRecentViewedIds] = useState<string[]>([]);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -49,6 +50,10 @@ function HomePage() {
     const shouldDark = saved === "dark";
     setDarkMode(shouldDark);
     document.documentElement.classList.toggle("dark", shouldDark);
+
+    const recentRaw = window.localStorage.getItem("studyshare-recent") || "[]";
+    const recent = JSON.parse(recentRaw) as string[];
+    setRecentViewedIds(recent);
   }, []);
 
   const toggleTheme = () => {
@@ -124,6 +129,11 @@ function HomePage() {
       .sort((a, b) => b[1] - a[1])
       .slice(0, 10);
   }, [materials]);
+
+  const recentlyViewed = useMemo(() => {
+    const byId = new Map(materials.map((item) => [item.id, item]));
+    return recentViewedIds.map((id) => byId.get(id)).filter(Boolean) as MaterialRow[];
+  }, [materials, recentViewedIds]);
 
   const totals = useMemo(
     () =>
@@ -244,6 +254,10 @@ function HomePage() {
 
         <Section title="Most downloaded" subtitle="Popular files students save most">
           <MaterialGrid items={mostDownloaded} loading={loading} />
+        </Section>
+
+        <Section title="Recently viewed" subtitle="Jump back to what you opened last">
+          <MaterialGrid items={recentlyViewed} loading={false} />
         </Section>
 
         <Section title="Popular subjects" subtitle="Most contributed topics">
