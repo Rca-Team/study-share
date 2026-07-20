@@ -97,20 +97,47 @@ export async function addReport(materialId: string, reason: string, reporterName
 }
 
 export async function incrementMetric(materialId: string, metric: "views" | "downloads" | "likes") {
-  const field = metric;
-  const { data: material, error: readError } = await supabase
+  if (metric === "views") {
+    const { data, error } = await supabase
+      .from("materials")
+      .select("views")
+      .eq("id", materialId)
+      .single();
+    if (error) throw error;
+    const { error: updateError } = await supabase
+      .from("materials")
+      .update({ views: Number(data?.views ?? 0) + 1 })
+      .eq("id", materialId);
+    if (updateError) throw updateError;
+    return;
+  }
+
+  if (metric === "downloads") {
+    const { data, error } = await supabase
+      .from("materials")
+      .select("downloads")
+      .eq("id", materialId)
+      .single();
+    if (error) throw error;
+    const { error: updateError } = await supabase
+      .from("materials")
+      .update({ downloads: Number(data?.downloads ?? 0) + 1 })
+      .eq("id", materialId);
+    if (updateError) throw updateError;
+    return;
+  }
+
+  const { data, error } = await supabase
     .from("materials")
-    .select(field)
+    .select("likes")
     .eq("id", materialId)
     .single();
-  if (readError) throw readError;
-
-  const currentValue = Number(material?.[field] ?? 0);
-  const { error } = await supabase
-    .from("materials")
-    .update({ [field]: currentValue + 1 })
-    .eq("id", materialId);
   if (error) throw error;
+  const { error: updateError } = await supabase
+    .from("materials")
+    .update({ likes: Number(data?.likes ?? 0) + 1 })
+    .eq("id", materialId);
+  if (updateError) throw updateError;
 }
 
 export async function getDownloadUrl(filePath: string) {
