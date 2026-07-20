@@ -153,7 +153,7 @@ function HomePage() {
 
   return (
     <main className="min-h-screen pb-20">
-      <div className="section-frame relative overflow-hidden pt-6 sm:pt-8">
+      <div className="section-frame relative mt-6 overflow-hidden pt-6 sm:pt-8">
         <div className="pointer-events-none absolute -left-20 -top-16 h-72 w-72 rounded-full bg-brand-pink/25 blur-3xl" />
         <div className="pointer-events-none absolute -right-16 top-14 h-72 w-72 rounded-full bg-brand-aqua/25 blur-3xl" />
 
@@ -200,7 +200,7 @@ function HomePage() {
             Search, preview, upload, and download quality student resources instantly — no sign in required.
           </p>
 
-          <div className="glass-panel mx-auto grid w-full max-w-5xl gap-3 rounded-2xl p-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_150px_140px_140px_180px]">
+           <div className="glass-panel mx-auto grid w-full max-w-5xl gap-3 rounded-2xl p-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_150px_140px_140px_180px]">
             <label>
               <span className="sr-only">Search</span>
               <input
@@ -250,7 +250,7 @@ function HomePage() {
           <span className="truncate text-foreground">{recentTicker || "No recent materials yet"}</span>
         </section>
 
-        <section className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+         <section className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <StatsCard label="Total uploads" value={formatCount(totalCount)} />
           <StatsCard label="Total downloads" value={formatCount(totals.downloads)} />
           <StatsCard label="Total views" value={formatCount(totals.views)} />
@@ -279,7 +279,7 @@ function HomePage() {
               <button
                 key={name}
                 onClick={() => setSubject(name)}
-                className="hover-lift rounded-lg border border-border bg-card px-3 py-2 text-left"
+                className="hover-lift rounded-xl border border-border bg-card/90 px-3 py-2 text-left"
               >
                 <p className="truncate text-sm font-semibold text-foreground">{name}</p>
                 <p className="text-xs text-muted-foreground">{count} files</p>
@@ -360,7 +360,7 @@ function MaterialGrid({ items, loading }: { items: MaterialRow[]; loading: boole
           key={item.id}
           to="/materials/$id"
           params={{ id: item.id }}
-          className="hover-lift animate-fade-in rounded-3xl border border-border bg-card/90 p-4"
+          className="hover-lift animate-fade-in rounded-2xl border border-border bg-card/90 p-4"
         >
           <div className="mb-3 flex items-center justify-between gap-2">
             <span className="rounded-lg bg-secondary px-2 py-1 text-xs font-medium text-secondary-foreground">

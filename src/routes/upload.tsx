@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { MATERIAL_ACCEPT, CLASS_OPTIONS } from "@/lib/studyshare";
 import { uploadMaterial } from "@/lib/materials-client";
@@ -114,13 +114,21 @@ function UploadPage() {
   };
 
   return (
-    <main className="section-frame py-8">
-      <section className="mx-auto w-full max-w-5xl rounded-3xl border border-border bg-card/85 p-5 sm:p-7">
-        <div className="mb-6 flex items-center justify-between gap-3">
+    <main className="min-h-screen pb-16">
+      <section className="section-frame mx-auto mt-6 w-full max-w-6xl p-5 sm:p-7">
+        <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
           <StudyShareLogo compact className="gap-2" iconClassName="h-10 w-10 rounded-xl" />
-          <span className="rounded-full border border-border bg-background px-3 py-1 text-xs font-semibold text-muted-foreground">
-            Drag + Drop Upload
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="rounded-full border border-border bg-background px-3 py-1 text-xs font-semibold text-muted-foreground">
+              Drag + Drop Upload
+            </span>
+            <Link
+              to="/"
+              className="rounded-xl border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-accent"
+            >
+              Back to home
+            </Link>
+          </div>
         </div>
 
         <h1 className="text-3xl font-extrabold text-foreground">Upload study material</h1>
@@ -130,7 +138,7 @@ function UploadPage() {
 
         <form className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px]" onSubmit={handleSubmit}>
           <div className="space-y-4">
-          <label
+            <label
             onDragOver={(e) => {
               e.preventDefault();
               setDragActive(true);
@@ -157,9 +165,9 @@ function UploadPage() {
               </p>
               <p className="mt-1 text-xs text-muted-foreground">PDF, JPG/PNG/WEBP, PPT/PPTX, DOC/DOCX, TXT, ZIP</p>
             </div>
-          </label>
+            </label>
 
-          <div className="rounded-xl border border-border bg-background p-3">
+            <div className="rounded-xl border border-border bg-background p-3">
             <div className="mb-2 flex items-center justify-between text-xs">
               <span className="font-semibold text-foreground">Upload progress</span>
               <span className="text-muted-foreground">{uploadProgress}%</span>
@@ -171,9 +179,9 @@ function UploadPage() {
               />
             </div>
             <p className="mt-2 text-xs text-muted-foreground">{saving ? uploadStage : "Waiting for upload"}</p>
-          </div>
+            </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Title" required>
               <input
                 value={title}
@@ -188,18 +196,18 @@ function UploadPage() {
                 className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
               />
             </Field>
-          </div>
+            </div>
 
-          <Field label="Description">
+            <Field label="Description">
             <textarea
               rows={4}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
             />
-          </Field>
+            </Field>
 
-          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-3">
             <Field label="Class">
               <select
                 value={classLevel}
@@ -230,26 +238,26 @@ function UploadPage() {
                 className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
               />
             </Field>
-          </div>
+            </div>
 
-          {error ? <p className="text-sm text-destructive">{error}</p> : null}
+            {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
-          <div className="flex flex-wrap gap-2">
-            <button
+            <div className="flex flex-wrap gap-2">
+              <button
               type="submit"
               disabled={saving}
               className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 disabled:opacity-70"
             >
               {saving ? "Uploading..." : "Upload material"}
-            </button>
-            <button
+              </button>
+              <button
               type="button"
               onClick={() => navigate({ to: "/" })}
               className="rounded-xl border border-border bg-background px-4 py-2 text-sm"
             >
               Cancel
-            </button>
-          </div>
+              </button>
+            </div>
           </div>
 
           <aside className="space-y-3">

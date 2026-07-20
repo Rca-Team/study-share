@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { StudyShareLogo } from "@/components/studyshare-logo";
 import {
   deleteMaterial,
   deleteReport,
@@ -56,26 +57,34 @@ function AdminPage() {
   }, [materials]);
 
   return (
-    <main className="section-frame py-8">
-      <h1 className="text-2xl font-extrabold text-foreground">StudyShare admin</h1>
-      <p className="mt-1 text-sm text-muted-foreground">Manage uploads, reports, pins, and storage usage.</p>
+    <main className="min-h-screen pb-16">
+      <section className="section-frame mt-6 p-5 sm:p-7">
+        <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <StudyShareLogo compact className="gap-2" iconClassName="h-10 w-10 rounded-xl" />
+            <div className="min-w-0">
+              <h1 className="truncate text-2xl font-extrabold text-foreground">StudyShare admin</h1>
+              <p className="mt-1 text-sm text-muted-foreground">Manage uploads, reports, pins, and storage usage.</p>
+            </div>
+          </div>
+        </header>
 
-      <section className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        <Tile label="Uploads" value={formatCount(materials.length)} />
-        <Tile label="Reports" value={formatCount(reports.length)} />
-        <Tile label="Views" value={formatCount(analytics.totalViews)} />
-        <Tile label="Downloads" value={formatCount(analytics.totalDownloads)} />
-        <Tile label="Storage" value={formatFileSize(analytics.storageUsage)} />
-      </section>
+        <section className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          <Tile label="Uploads" value={formatCount(materials.length)} />
+          <Tile label="Reports" value={formatCount(reports.length)} />
+          <Tile label="Views" value={formatCount(analytics.totalViews)} />
+          <Tile label="Downloads" value={formatCount(analytics.totalDownloads)} />
+          <Tile label="Storage" value={formatFileSize(analytics.storageUsage)} />
+        </section>
 
-      <section className="mt-6 grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <article className="rounded-xl border border-border bg-card p-4">
+        <section className="mt-6 grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
+          <article className="rounded-2xl border border-border bg-card/90 p-4">
           <h2 className="text-lg font-semibold text-foreground">Manage uploads</h2>
           {loading ? <div className="mt-3 h-56 animate-pulse rounded-lg bg-muted" /> : null}
 
           <div className="mt-3 space-y-2">
             {materials.map((item) => (
-              <div key={item.id} className="grid gap-3 rounded-lg border border-border bg-background p-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+              <div key={item.id} className="grid gap-3 rounded-xl border border-border bg-background p-3 sm:grid-cols-[minmax(0,1fr)_auto]">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold text-foreground">{item.title}</p>
                   <p className="text-xs text-muted-foreground">
@@ -88,7 +97,7 @@ function AdminPage() {
                       await setMaterialPin(item.id, !item.is_pinned);
                       await load();
                     }}
-                    className="rounded-md border border-border px-3 py-1 text-xs"
+                    className="rounded-lg border border-border px-3 py-1 text-xs hover:bg-accent"
                   >
                     {item.is_pinned ? "Unpin" : "Pin"}
                   </button>
@@ -97,7 +106,7 @@ function AdminPage() {
                       await setMaterialHidden(item.id, !item.is_hidden);
                       await load();
                     }}
-                    className="rounded-md border border-border px-3 py-1 text-xs"
+                    className="rounded-lg border border-border px-3 py-1 text-xs hover:bg-accent"
                   >
                     {item.is_hidden ? "Unhide" : "Hide"}
                   </button>
@@ -106,7 +115,7 @@ function AdminPage() {
                       await deleteMaterial(item.id, item.file_path);
                       await load();
                     }}
-                    className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-1 text-xs text-destructive"
+                    className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-1 text-xs text-destructive"
                   >
                     Delete
                   </button>
@@ -114,13 +123,13 @@ function AdminPage() {
               </div>
             ))}
           </div>
-        </article>
+          </article>
 
-        <article className="rounded-xl border border-border bg-card p-4">
+          <article className="rounded-2xl border border-border bg-card/90 p-4">
           <h2 className="text-lg font-semibold text-foreground">Reports queue</h2>
           <div className="mt-3 space-y-2">
             {reports.map((report) => (
-              <div key={report.id} className="rounded-lg border border-border bg-background p-3">
+              <div key={report.id} className="rounded-xl border border-border bg-background p-3">
                 <p className="text-sm font-semibold text-foreground">{report.materials?.title || "Deleted material"}</p>
                 <p className="mt-1 text-xs text-muted-foreground">{report.reason}</p>
                 <p className="mt-1 text-[11px] text-muted-foreground">{new Date(report.created_at).toLocaleString()}</p>
@@ -129,14 +138,15 @@ function AdminPage() {
                     await deleteReport(report.id);
                     await load();
                   }}
-                  className="mt-2 rounded-md border border-border px-3 py-1 text-xs"
+                  className="mt-2 rounded-lg border border-border px-3 py-1 text-xs hover:bg-accent"
                 >
                   Mark resolved
                 </button>
               </div>
             ))}
           </div>
-        </article>
+          </article>
+        </section>
       </section>
     </main>
   );
@@ -144,7 +154,7 @@ function AdminPage() {
 
 function Tile({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-3">
+    <div className="glass-panel rounded-2xl p-3">
       <p className="text-xs text-muted-foreground">{label}</p>
       <p className="mt-1 text-xl font-bold text-foreground">{value}</p>
     </div>
