@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { StudyShareLogo } from "@/components/studyshare-logo";
+import { requireAdminUnlocked } from "@/lib/admin-gate.functions";
 import {
   deleteMaterial,
   deleteReport,
@@ -11,6 +12,9 @@ import {
 import { formatCount, formatFileSize, type MaterialRow } from "@/lib/studyshare";
 
 export const Route = createFileRoute("/admin")({
+  beforeLoad: async () => {
+    await requireAdminUnlocked();
+  },
   head: () => ({
     meta: [
       { title: "Admin panel — StudyShare" },
