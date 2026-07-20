@@ -5,7 +5,6 @@ import { StudyShareLogo } from "@/components/studyshare-logo";
 import {
   fetchMaterials,
   fetchMaterialsForAiSearch,
-  type MaterialSort,
 } from "@/lib/materials-client";
 import { rankMaterialsByAi } from "@/lib/material-search.functions";
 import {
@@ -36,10 +35,6 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   const [query, setQuery] = useState("");
-  const [sort, setSort] = useState<MaterialSort>("latest");
-  const [subject, setSubject] = useState("");
-  const [classLevel, setClassLevel] = useState("");
-  const [fileType, setFileType] = useState("");
   const [materials, setMaterials] = useState<MaterialRow[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(0);
@@ -76,10 +71,6 @@ function HomePage() {
     try {
       const result = await fetchMaterials({
         q: query,
-        sort,
-        subject: subject || undefined,
-        classLevel: classLevel || undefined,
-        fileType: fileType || undefined,
         page: nextPage,
         pageSize: 12,
       });
@@ -107,9 +98,9 @@ function HomePage() {
       setLoading(true);
       try {
         const candidates = await fetchMaterialsForAiSearch({
-          subject: subject || undefined,
-          classLevel: classLevel || undefined,
-          fileType: fileType || undefined,
+          subject: undefined,
+          classLevel: undefined,
+          fileType: undefined,
         });
 
         if (!candidates.length) {
@@ -160,7 +151,7 @@ function HomePage() {
     return () => {
       isCancelled = true;
     };
-  }, [query, sort, subject, classLevel, fileType]);
+  }, [query]);
 
   useEffect(() => {
     const node = sentinelRef.current;
@@ -174,7 +165,7 @@ function HomePage() {
     });
     observer.observe(node);
     return () => observer.disconnect();
-  }, [page, hasMore, loading, query, sort, subject, classLevel, fileType]);
+  }, [page, hasMore, loading, query]);
 
   const trending = useMemo(
     () => [...materials].sort((a, b) => b.views + b.downloads - (a.views + a.downloads)).slice(0, 6),
@@ -270,51 +261,22 @@ function HomePage() {
             Search, preview, upload, and download quality student resources instantly — no sign in required.
           </p>
 
-          <div className="glass-panel mx-auto grid w-full max-w-5xl gap-3 rounded-2xl p-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_150px_140px_140px_180px]">
+          <div className="glass-panel mx-auto w-full max-w-3xl rounded-2xl p-3">
             <label>
               <span className="sr-only">Search</span>
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Ask naturally: 'class 11 trigonometry notes with examples'"
-                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none"
-              />
+              <div className="group relative overflow-hidden rounded-xl border border-input bg-background/90 transition-all duration-300 focus-within:border-primary focus-within:shadow-lg focus-within:shadow-primary/20">
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/10 to-primary/0 opacity-0 transition-opacity duration-500 group-focus-within:opacity-100" />
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Ask naturally: 'class 11 trigonometry notes with examples'"
+                  className="relative w-full bg-transparent px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+                />
+              </div>
             </label>
 
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value as MaterialSort)}
-              className="rounded-lg border border-input bg-background px-3 py-2 text-sm"
-            >
-              <option value="latest">Latest</option>
-              <option value="downloads">Most Downloaded</option>
-              <option value="views">Most Viewed</option>
-              <option value="az">A–Z</option>
-            </select>
-
-            <input
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              placeholder="Subject"
-              className="rounded-lg border border-input bg-background px-3 py-2 text-sm"
-            />
-
-            <input
-              value={classLevel}
-              onChange={(e) => setClassLevel(e.target.value)}
-              placeholder="Class"
-              className="rounded-lg border border-input bg-background px-3 py-2 text-sm"
-            />
-
-            <input
-              value={fileType}
-              onChange={(e) => setFileType(e.target.value.toLowerCase())}
-              placeholder="Type (pdf, docx, pptx)"
-              className="rounded-lg border border-input bg-background px-3 py-2 text-sm"
-            />
-
             {query.trim() ? (
-              <p className="col-span-full rounded-lg border border-border/80 bg-card/90 px-3 py-2 text-xs text-muted-foreground">
+              <p className="mt-3 rounded-lg border border-border/80 bg-card/90 px-3 py-2 text-xs text-muted-foreground">
                 AI Search: {aiReason || "Understanding your query and ranking by relevance..."}
               </p>
             ) : null}
@@ -354,7 +316,7 @@ function HomePage() {
             {popularSubjects.map(([name, count]) => (
               <button
                 key={name}
-                onClick={() => setSubject(name)}
+                onClick={() => setQuery(name)}
                 className="hover-lift rounded-xl border border-border bg-card/90 px-3 py-2 text-left"
               >
                 <p className="truncate text-sm font-semibold text-foreground">{name}</p>
