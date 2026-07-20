@@ -14,7 +14,7 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "StudyShare — Browse Free Study Materials" },
+      { title: "StudyShare • Made by Gaurav" },
       {
         name: "description",
         content:
@@ -164,6 +164,12 @@ function HomePage() {
             >
               {darkMode ? "Light" : "Dark"}
             </button>
+            <Link
+              to="/about"
+              className="rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground hover:bg-accent sm:text-sm"
+            >
+              About
+            </Link>
             <Link
               to="/admin"
               className="rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground hover:bg-accent sm:text-sm"
