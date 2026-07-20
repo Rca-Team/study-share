@@ -23,7 +23,7 @@ export const Route = createFileRoute("/about")({
 function AboutPage() {
   return (
     <main className="section-frame py-10">
-      <section className="mx-auto max-w-3xl rounded-2xl border border-border bg-card/80 p-6 shadow-sm sm:p-8">
+      <section className="mx-auto max-w-3xl rounded-3xl border border-border bg-card/85 p-6 shadow-sm sm:p-8">
         <h1 className="text-3xl font-extrabold text-foreground">About the Creator</h1>
 
         <div className="mt-5 space-y-3 text-foreground">

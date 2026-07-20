@@ -200,8 +200,8 @@ function HomePage() {
             Search, preview, upload, and download quality student resources instantly — no sign in required.
           </p>
 
-          <div className="glass-panel mx-auto grid w-full max-w-5xl gap-3 rounded-2xl p-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_160px_140px_140px_auto]">
-            <label className="lg:col-span-2">
+          <div className="glass-panel mx-auto grid w-full max-w-5xl gap-3 rounded-2xl p-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_150px_140px_140px_180px]">
+            <label>
               <span className="sr-only">Search</span>
               <input
                 value={query}
@@ -360,7 +360,7 @@ function MaterialGrid({ items, loading }: { items: MaterialRow[]; loading: boole
           key={item.id}
           to="/materials/$id"
           params={{ id: item.id }}
-          className="hover-lift animate-enter rounded-3xl border border-border bg-card/90 p-4"
+          className="hover-lift animate-fade-in rounded-3xl border border-border bg-card/90 p-4"
         >
           <div className="mb-3 flex items-center justify-between gap-2">
             <span className="rounded-lg bg-secondary px-2 py-1 text-xs font-medium text-secondary-foreground">
