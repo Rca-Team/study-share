@@ -223,11 +223,11 @@ function HomePage() {
 
   return (
     <main className="min-h-screen pb-20">
-      <div className="section-frame relative mt-6 overflow-hidden pt-6 sm:pt-8">
+      <div className="cyber-panel relative mt-6 overflow-hidden pt-6 sm:pt-8">
         <div className="pointer-events-none absolute -left-20 -top-16 h-72 w-72 rounded-full bg-brand-pink/25 blur-3xl" />
         <div className="pointer-events-none absolute -right-16 top-14 h-72 w-72 rounded-full bg-brand-aqua/25 blur-3xl" />
 
-        <header className="glass-panel grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-xl p-3 sm:flex sm:justify-between sm:p-4">
+        <header className="glass-panel cyber-sheen animate-enter grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-xl p-3 sm:flex sm:justify-between sm:p-4">
           <Link to="/" className="min-w-0">
             <StudyShareLogo compact className="gap-2" iconClassName="h-9 w-9 rounded-xl" />
           </Link>
@@ -259,7 +259,7 @@ function HomePage() {
           </div>
         </header>
 
-        <section className="relative mt-6 grid gap-4 rounded-3xl border border-border/70 bg-card/85 p-6 shadow-sm sm:p-10">
+        <section className="cyber-panel relative mt-6 grid gap-4 rounded-2xl p-6 sm:p-10">
           <div className="mx-auto flex justify-center">
             <StudyShareLogo className="flex-col gap-4 text-center" iconClassName="h-16 w-16" />
           </div>
@@ -270,7 +270,7 @@ function HomePage() {
             Search, preview, upload, and download quality student resources instantly — no sign in required.
           </p>
 
-          <div className="glass-panel mx-auto grid w-full max-w-5xl gap-3 rounded-2xl p-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_150px_140px_140px_180px]">
+           <div className="glass-panel cyber-sheen mx-auto grid w-full max-w-5xl gap-3 rounded-xl p-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_150px_140px_140px_180px]">
             <label>
               <span className="sr-only">Search</span>
               <input
@@ -321,7 +321,7 @@ function HomePage() {
           </div>
         </section>
 
-        <section className="mt-4 flex flex-wrap items-center gap-2 rounded-lg border border-border/70 bg-card/65 px-3 py-2 text-xs text-muted-foreground sm:text-sm">
+         <section className="glass-panel mt-4 flex flex-wrap items-center gap-2 rounded-lg border border-border/70 bg-card/65 px-3 py-2 text-xs text-muted-foreground sm:text-sm">
           <span>Recent uploads:</span>
           <span className="truncate text-foreground">{recentTicker || "No recent materials yet"}</span>
         </section>
@@ -381,9 +381,9 @@ function HomePage() {
   );
 }
 
-function StatsCard({ label, value }: { label: string; value: string }) {
+ function StatsCard({ label, value }: { label: string; value: string }) {
   return (
-    <article className="glass-panel rounded-2xl p-4 hover-lift">
+    <article className="glass-panel cyber-sheen animate-enter rounded-xl p-4 hover-lift">
       <p className="text-xs text-muted-foreground">{label}</p>
       <p className="mt-2 text-2xl font-bold text-foreground">{value}</p>
     </article>
@@ -436,7 +436,7 @@ function MaterialGrid({ items, loading }: { items: MaterialRow[]; loading: boole
           key={item.id}
           to="/materials/$id"
           params={{ id: item.id }}
-          className="hover-lift animate-fade-in rounded-2xl border border-border bg-card/90 p-4"
+          className="hover-lift animate-enter cyber-panel rounded-xl p-4"
         >
           <div className="mb-3 flex items-center justify-between gap-2">
             <span className="rounded-lg bg-secondary px-2 py-1 text-xs font-medium text-secondary-foreground">

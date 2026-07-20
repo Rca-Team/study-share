@@ -115,7 +115,7 @@ function UploadPage() {
 
   return (
     <main className="min-h-screen pb-16">
-      <section className="section-frame mx-auto mt-6 w-full max-w-6xl p-5 sm:p-7">
+      <section className="cyber-panel mx-auto mt-6 w-full max-w-6xl p-5 sm:p-7">
         <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
           <StudyShareLogo compact className="gap-2" iconClassName="h-10 w-10 rounded-xl" />
           <div className="flex items-center gap-2">
@@ -149,7 +149,7 @@ function UploadPage() {
               setDragActive(false);
               onDropFile(e.dataTransfer.files?.[0]);
             }}
-            className={`grid min-h-40 place-items-center rounded-2xl border-2 border-dashed px-4 py-6 text-center transition-all ${
+             className={`grid min-h-40 place-items-center rounded-xl border-2 border-dashed px-4 py-6 text-center transition-all ${
               dragActive ? "border-primary bg-accent/50" : "border-border bg-background"
             }`}
           >
@@ -167,7 +167,7 @@ function UploadPage() {
             </div>
             </label>
 
-            <div className="rounded-xl border border-border bg-background p-3">
+             <div className="glass-panel rounded-xl border border-border bg-background p-3">
             <div className="mb-2 flex items-center justify-between text-xs">
               <span className="font-semibold text-foreground">Upload progress</span>
               <span className="text-muted-foreground">{uploadProgress}%</span>
@@ -261,7 +261,7 @@ function UploadPage() {
           </div>
 
           <aside className="space-y-3">
-            <div className="rounded-2xl border border-border bg-background p-3">
+             <div className="cyber-panel rounded-xl border border-border bg-background p-3">
               <h2 className="text-sm font-semibold text-foreground">Inline preview</h2>
               <div className="mt-3 grid min-h-64 place-items-center overflow-hidden rounded-xl border border-border bg-muted/35">
                 {!file ? (
@@ -286,7 +286,7 @@ function UploadPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-border bg-background p-3 text-xs text-muted-foreground">
+             <div className="glass-panel rounded-xl border border-border bg-background p-3 text-xs text-muted-foreground">
               <p className="font-semibold text-foreground">Supported files</p>
               <p className="mt-1">PDF, JPG, PNG, WEBP, PPT, PPTX, DOC, DOCX, TXT, ZIP</p>
             </div>
