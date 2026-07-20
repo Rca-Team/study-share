@@ -140,8 +140,8 @@ function MaterialPage() {
   };
 
   return (
-    <main className="section-frame py-8">
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
+    <main className="min-h-screen pb-16">
+      <div className="section-frame mt-6 grid gap-6 p-4 sm:p-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         <section className="rounded-3xl border border-border bg-card/90 p-4 sm:p-6">
           <div className="mb-4 flex items-center justify-between">
             <StudyShareLogo compact className="gap-2" iconClassName="h-8 w-8 rounded-lg" />
@@ -235,7 +235,7 @@ function MaterialPage() {
         </aside>
       </div>
 
-      <section className="mt-6 grid gap-4 lg:grid-cols-2">
+      <section className="section-frame mt-6 grid gap-4 p-4 sm:p-6 lg:grid-cols-2">
         <article className="rounded-2xl border border-border bg-card p-4">
           <h2 className="text-lg font-semibold text-foreground">Comments</h2>
           <form className="mt-3 space-y-2" onSubmit={onComment}>
