@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { registerStudySharePwa } from "@/lib/pwa";
 
 function NotFoundComponent() {
   return (
@@ -107,7 +108,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
       { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "apple-touch-icon", href: "/icons/icon-192.png" },
-      { rel: "canonical", href: "https://studyshare.lovable.app/" },
+      {
+        rel: "canonical",
+        href: "https://id-preview--231a390b-f19f-440e-9c64-dc52e9086144.lovable.app/",
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -132,6 +136,12 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      void registerStudySharePwa();
+    }
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
