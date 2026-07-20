@@ -19,6 +19,8 @@ export type MaterialFilters = {
   pageSize?: number;
 };
 
+export type MaterialFilterScope = Pick<MaterialFilters, "subject" | "classLevel" | "fileType">;
+
 export async function fetchMaterials(filters: MaterialFilters = {}) {
   const page = filters.page ?? 0;
   const pageSize = filters.pageSize ?? 12;
@@ -50,6 +52,23 @@ export async function fetchMaterials(filters: MaterialFilters = {}) {
     count: count ?? 0,
     hasMore: (count ?? 0) > to + 1,
   };
+}
+
+export async function fetchMaterialsForAiSearch(filters: MaterialFilterScope = {}, limit = 120) {
+  let query = supabase
+    .from("materials")
+    .select("*")
+    .eq("is_hidden", false)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (filters.subject) query = query.eq("subject", filters.subject);
+  if (filters.classLevel) query = query.eq("class_level", filters.classLevel);
+  if (filters.fileType) query = query.eq("file_type", filters.fileType);
+
+  const { data, error } = await query;
+  if (error) throw error;
+  return (data ?? []) as MaterialRow[];
 }
 
 export async function fetchMaterialById(id: string) {
