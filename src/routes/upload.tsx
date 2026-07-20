@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { MATERIAL_ACCEPT, CLASS_OPTIONS } from "@/lib/studyshare";
 import { uploadMaterial } from "@/lib/materials-client";
 
@@ -52,7 +52,7 @@ function UploadPage() {
     if (!title) setTitle(candidate.name.replace(/\.[^/.]+$/, ""));
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (!file) {
       setError("Please select a file to upload.");
@@ -210,7 +210,7 @@ function Field({
   required,
 }: {
   label: string;
-  children: React.ReactNode;
+  children: ReactNode;
   required?: boolean;
 }) {
   return (

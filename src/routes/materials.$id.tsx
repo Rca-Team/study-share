@@ -1,5 +1,6 @@
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
+import QRCode from "qrcode";
 import {
   addComment,
   addReport,
@@ -40,6 +41,7 @@ function MaterialPage() {
   const [commentText, setCommentText] = useState("");
   const [reportReason, setReportReason] = useState("");
   const [loading, setLoading] = useState(true);
+  const [qrDataUrl, setQrDataUrl] = useState("");
 
   useEffect(() => {
     const run = async () => {
@@ -62,6 +64,7 @@ function MaterialPage() {
         const recent = JSON.parse(recentRaw) as string[];
         const next = [current.id, ...recent.filter((entry) => entry !== current.id)].slice(0, 20);
         window.localStorage.setItem("studyshare-recent", JSON.stringify(next));
+        setQrDataUrl(await QRCode.toDataURL(window.location.href));
       } finally {
         setLoading(false);
       }
@@ -119,7 +122,7 @@ function MaterialPage() {
     await onCopyLink();
   };
 
-  const onComment = async (event: React.FormEvent) => {
+  const onComment = async (event: FormEvent) => {
     event.preventDefault();
     if (!commentText.trim()) return;
     await addComment(material.id, commentName.trim() || "Anonymous", commentText.trim());
@@ -128,14 +131,12 @@ function MaterialPage() {
     setComments(await fetchComments(material.id));
   };
 
-  const onReport = async (event: React.FormEvent) => {
+  const onReport = async (event: FormEvent) => {
     event.preventDefault();
     if (!reportReason.trim()) return;
     await addReport(material.id, reportReason.trim(), commentName.trim() || undefined);
     setReportReason("");
   };
-
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(window.location.href)}`;
 
   return (
     <main className="section-frame py-8">
@@ -205,7 +206,7 @@ function MaterialPage() {
 
           <section className="rounded-xl border border-border bg-card p-4">
             <h2 className="text-sm font-semibold text-foreground">QR code</h2>
-            <img src={qrUrl} alt="QR code for material page" loading="lazy" className="mx-auto mt-3 h-40 w-40 rounded-lg border border-border bg-background p-2" />
+            <img src={qrDataUrl} alt="QR code for material page" loading="lazy" className="mx-auto mt-3 h-40 w-40 rounded-lg border border-border bg-background p-2" />
           </section>
 
           <section className="rounded-xl border border-border bg-card p-4">

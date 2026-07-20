@@ -9,8 +9,6 @@ import {
 } from "@/lib/materials-client";
 import { formatCount, formatFileSize, type MaterialRow } from "@/lib/studyshare";
 
-const ADMIN_PASSCODE = "studyshare-admin";
-
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
@@ -25,8 +23,6 @@ export const Route = createFileRoute("/admin")({
 });
 
 function AdminPage() {
-  const [authorized, setAuthorized] = useState(false);
-  const [passcode, setPasscode] = useState("");
   const [materials, setMaterials] = useState<MaterialRow[]>([]);
   const [reports, setReports] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -43,10 +39,8 @@ function AdminPage() {
   };
 
   useEffect(() => {
-    if (authorized) {
-      void load();
-    }
-  }, [authorized]);
+    void load();
+  }, []);
 
   const analytics = useMemo(() => {
     const storageUsage = materials.reduce((sum, item) => sum + item.file_size, 0);
@@ -60,37 +54,6 @@ function AdminPage() {
       hidden: materials.filter((item) => item.is_hidden).length,
     };
   }, [materials]);
-
-  if (!authorized) {
-    return (
-      <main className="section-frame py-10">
-        <section className="mx-auto max-w-md rounded-xl border border-border bg-card p-6">
-          <h1 className="text-xl font-semibold text-foreground">Admin panel</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Enter admin passcode to continue.</p>
-          <form
-            className="mt-4 space-y-3"
-            onSubmit={(event) => {
-              event.preventDefault();
-              if (passcode === ADMIN_PASSCODE) {
-                setAuthorized(true);
-                return;
-              }
-              setPasscode("");
-            }}
-          >
-            <input
-              type="password"
-              value={passcode}
-              onChange={(e) => setPasscode(e.target.value)}
-              placeholder="Passcode"
-              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
-            />
-            <button className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">Open panel</button>
-          </form>
-        </section>
-      </main>
-    );
-  }
 
   return (
     <main className="section-frame py-8">

@@ -164,8 +164,13 @@ export async function uploadMaterial(args: {
   });
   if (uploadError) throw uploadError;
 
-  const defaultThumbnail = fileType === "pdf" ? makePdfThumbnailDataUrl(args.title) : null;
   const fileUrl = await getSignedMaterialUrl(path, 60 * 60 * 24 * 7);
+  const defaultThumbnail =
+    fileType === "pdf"
+      ? makePdfThumbnailDataUrl(args.title)
+      : ["jpg", "jpeg", "png", "webp"].includes(fileType)
+        ? fileUrl
+        : null;
 
   const { data, error } = await supabase
     .from("materials")

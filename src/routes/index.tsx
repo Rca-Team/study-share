@@ -1,5 +1,5 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   fetchMaterials,
   type MaterialSort,
@@ -294,7 +294,7 @@ function Section({
 }: {
   title: string;
   subtitle: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <section className="mt-8">
