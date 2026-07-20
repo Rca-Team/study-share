@@ -1,7 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { MATERIAL_ACCEPT, CLASS_OPTIONS } from "@/lib/studyshare";
 import { uploadMaterial } from "@/lib/materials-client";
+import { StudyShareLogo } from "@/components/studyshare-logo";
 
 export const Route = createFileRoute("/upload")({
   head: () => ({
@@ -33,8 +34,29 @@ function UploadPage() {
   const [uploaderName, setUploaderName] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStage, setUploadStage] = useState("Waiting for file");
+  const [previewUrl, setPreviewUrl] = useState("");
 
   const acceptedExtensions = useMemo(() => ["pdf", "jpg", "jpeg", "png", "webp", "ppt", "pptx", "doc", "docx", "txt", "zip"], []);
+  const previewable = useMemo(() => ["pdf", "jpg", "jpeg", "png", "webp"], []);
+
+  useEffect(() => {
+    if (!file) {
+      setPreviewUrl("");
+      return;
+    }
+
+    const ext = file.name.split(".").pop()?.toLowerCase() || "";
+    if (!previewable.includes(ext)) {
+      setPreviewUrl("");
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+    setPreviewUrl(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [file, previewable]);
 
   const validateFile = (candidate: File) => {
     const ext = candidate.name.split(".").pop()?.toLowerCase() || "";
@@ -49,6 +71,8 @@ function UploadPage() {
     }
     setError("");
     setFile(candidate);
+    setUploadProgress(0);
+    setUploadStage("Ready to upload");
     if (!title) setTitle(candidate.name.replace(/\.[^/.]+$/, ""));
   };
 
@@ -64,6 +88,8 @@ function UploadPage() {
     }
 
     setSaving(true);
+    setUploadProgress(5);
+    setUploadStage("Preparing upload");
     setError("");
     try {
       const id = await uploadMaterial({
@@ -74,6 +100,10 @@ function UploadPage() {
         classLevel,
         tagsRaw: tags,
         uploaderName: uploaderName.trim(),
+        onProgress: (progress, stage) => {
+          setUploadProgress(progress);
+          setUploadStage(stage);
+        },
       });
       await navigate({ to: "/materials/$id", params: { id } });
     } catch (err) {
@@ -85,13 +115,21 @@ function UploadPage() {
 
   return (
     <main className="section-frame py-8">
-      <section className="mx-auto w-full max-w-3xl rounded-2xl border border-border bg-card/80 p-5 sm:p-7">
-        <h1 className="text-2xl font-extrabold text-foreground">Upload study material</h1>
+      <section className="mx-auto w-full max-w-5xl rounded-3xl border border-border bg-card/85 p-5 sm:p-7">
+        <div className="mb-6 flex items-center justify-between gap-3">
+          <StudyShareLogo compact className="gap-2" iconClassName="h-10 w-10 rounded-xl" />
+          <span className="rounded-full border border-border bg-background px-3 py-1 text-xs font-semibold text-muted-foreground">
+            Drag + Drop Upload
+          </span>
+        </div>
+
+        <h1 className="text-3xl font-extrabold text-foreground">Upload study material</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Drag and drop or choose a file, then add details so others can find it quickly.
+          Add clean details, see live preview, and track progress clearly while uploading.
         </p>
 
-        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+        <form className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px]" onSubmit={handleSubmit}>
+          <div className="space-y-4">
           <label
             onDragOver={(e) => {
               e.preventDefault();
@@ -103,7 +141,7 @@ function UploadPage() {
               setDragActive(false);
               onDropFile(e.dataTransfer.files?.[0]);
             }}
-            className={`grid min-h-36 place-items-center rounded-xl border-2 border-dashed px-4 py-6 text-center ${
+            className={`grid min-h-40 place-items-center rounded-2xl border-2 border-dashed px-4 py-6 text-center transition-all ${
               dragActive ? "border-primary bg-accent/50" : "border-border bg-background"
             }`}
           >
@@ -120,6 +158,20 @@ function UploadPage() {
               <p className="mt-1 text-xs text-muted-foreground">PDF, JPG/PNG/WEBP, PPT/PPTX, DOC/DOCX, TXT, ZIP</p>
             </div>
           </label>
+
+          <div className="rounded-xl border border-border bg-background p-3">
+            <div className="mb-2 flex items-center justify-between text-xs">
+              <span className="font-semibold text-foreground">Upload progress</span>
+              <span className="text-muted-foreground">{uploadProgress}%</span>
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+              <div
+                className="h-full rounded-full bg-primary transition-all duration-300"
+                style={{ width: `${uploadProgress}%` }}
+              />
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">{saving ? uploadStage : "Waiting for upload"}</p>
+          </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Title" required>
@@ -186,18 +238,51 @@ function UploadPage() {
             <button
               type="submit"
               disabled={saving}
-              className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-70"
+              className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 disabled:opacity-70"
             >
               {saving ? "Uploading..." : "Upload material"}
             </button>
             <button
               type="button"
               onClick={() => navigate({ to: "/" })}
-              className="rounded-lg border border-border bg-background px-4 py-2 text-sm"
+              className="rounded-xl border border-border bg-background px-4 py-2 text-sm"
             >
               Cancel
             </button>
           </div>
+          </div>
+
+          <aside className="space-y-3">
+            <div className="rounded-2xl border border-border bg-background p-3">
+              <h2 className="text-sm font-semibold text-foreground">Inline preview</h2>
+              <div className="mt-3 grid min-h-64 place-items-center overflow-hidden rounded-xl border border-border bg-muted/35">
+                {!file ? (
+                  <p className="px-4 text-center text-xs text-muted-foreground">Select a PDF or image to preview here.</p>
+                ) : previewUrl && file.name.toLowerCase().endsWith(".pdf") ? (
+                  <iframe
+                    src={previewUrl}
+                    title="PDF upload preview"
+                    className="h-[340px] w-full sm:h-[420px]"
+                  />
+                ) : previewUrl ? (
+                  <img
+                    src={previewUrl}
+                    alt={`Preview of ${file.name}`}
+                    className="h-[340px] w-full object-contain sm:h-[420px]"
+                  />
+                ) : (
+                  <p className="px-4 text-center text-xs text-muted-foreground">
+                    Preview not available for this file type.
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-background p-3 text-xs text-muted-foreground">
+              <p className="font-semibold text-foreground">Supported files</p>
+              <p className="mt-1">PDF, JPG, PNG, WEBP, PPT, PPTX, DOC, DOCX, TXT, ZIP</p>
+            </div>
+          </aside>
         </form>
       </section>
     </main>

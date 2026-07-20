@@ -1,6 +1,7 @@
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import QRCode from "qrcode";
+import { StudyShareLogo } from "@/components/studyshare-logo";
 import {
   addComment,
   addReport,
@@ -141,7 +142,13 @@ function MaterialPage() {
   return (
     <main className="section-frame py-8">
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
-        <section className="rounded-xl border border-border bg-card p-4 sm:p-5">
+        <section className="rounded-3xl border border-border bg-card/90 p-4 sm:p-6">
+          <div className="mb-4 flex items-center justify-between">
+            <StudyShareLogo compact className="gap-2" iconClassName="h-8 w-8 rounded-lg" />
+            <Link to="/" className="rounded-lg border border-border bg-background px-3 py-1.5 text-xs text-muted-foreground">
+              Back to library
+            </Link>
+          </div>
           <h1 className="text-2xl font-extrabold text-foreground">{material.title}</h1>
           <p className="mt-2 text-sm text-muted-foreground">{material.description || "No description added"}</p>
 
@@ -152,17 +159,22 @@ function MaterialPage() {
             <Metric label="Downloads" value={formatCount(material.downloads)} />
           </div>
 
-          <div className="mt-5 rounded-xl border border-border bg-background p-3">
+          <div className="mt-5 rounded-2xl border border-border bg-background p-3">
             {previewMode === "pdf" && downloadUrl ? (
               <iframe
                 src={`${downloadUrl}#view=FitH`}
                 title="PDF Preview"
-                className="h-[520px] w-full rounded-lg border border-border"
+                className="h-[60vh] min-h-[360px] w-full rounded-xl border border-border"
               />
             ) : null}
 
             {previewMode === "image" && downloadUrl ? (
-              <img src={downloadUrl} alt={`Preview of ${material.title}`} loading="lazy" className="h-auto max-h-[520px] w-full rounded-lg object-contain" />
+              <img
+                src={downloadUrl}
+                alt={`Preview of ${material.title}`}
+                loading="lazy"
+                className="h-[60vh] min-h-[340px] w-full rounded-xl object-contain"
+              />
             ) : null}
 
             {previewMode === "other" ? (
@@ -173,23 +185,23 @@ function MaterialPage() {
           </div>
 
           <div className="mt-4 flex flex-wrap gap-2">
-            <button onClick={() => void onDownload()} className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
+              <button onClick={() => void onDownload()} className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/25">
               Download
             </button>
-            <button onClick={() => void onLike()} className="rounded-lg border border-border bg-background px-4 py-2 text-sm">
+              <button onClick={() => void onLike()} className="rounded-xl border border-border bg-background px-4 py-2 text-sm">
               Like ({formatCount(material.likes)})
             </button>
-            <button onClick={() => void onShare()} className="rounded-lg border border-border bg-background px-4 py-2 text-sm">
+              <button onClick={() => void onShare()} className="rounded-xl border border-border bg-background px-4 py-2 text-sm">
               Share
             </button>
-            <button onClick={() => void onCopyLink()} className="rounded-lg border border-border bg-background px-4 py-2 text-sm">
+              <button onClick={() => void onCopyLink()} className="rounded-xl border border-border bg-background px-4 py-2 text-sm">
               Copy link
             </button>
           </div>
         </section>
 
         <aside className="space-y-4">
-          <section className="rounded-xl border border-border bg-card p-4">
+          <section className="rounded-2xl border border-border bg-card p-4">
             <h2 className="text-sm font-semibold text-foreground">Material info</h2>
             <dl className="mt-3 space-y-2 text-sm text-muted-foreground">
               <div className="flex justify-between gap-2"><dt>Subject</dt><dd className="font-medium text-foreground">{material.subject}</dd></div>
@@ -204,12 +216,12 @@ function MaterialPage() {
             </div>
           </section>
 
-          <section className="rounded-xl border border-border bg-card p-4">
+          <section className="rounded-2xl border border-border bg-card p-4">
             <h2 className="text-sm font-semibold text-foreground">QR code</h2>
             <img src={qrDataUrl} alt="QR code for material page" loading="lazy" className="mx-auto mt-3 h-40 w-40 rounded-lg border border-border bg-background p-2" />
           </section>
 
-          <section className="rounded-xl border border-border bg-card p-4">
+          <section className="rounded-2xl border border-border bg-card p-4">
             <h2 className="text-sm font-semibold text-foreground">Related materials</h2>
             <div className="mt-2 space-y-2">
               {related.map((item) => (
@@ -224,7 +236,7 @@ function MaterialPage() {
       </div>
 
       <section className="mt-6 grid gap-4 lg:grid-cols-2">
-        <article className="rounded-xl border border-border bg-card p-4">
+        <article className="rounded-2xl border border-border bg-card p-4">
           <h2 className="text-lg font-semibold text-foreground">Comments</h2>
           <form className="mt-3 space-y-2" onSubmit={onComment}>
             <input
@@ -253,7 +265,7 @@ function MaterialPage() {
           </div>
         </article>
 
-        <article className="rounded-xl border border-border bg-card p-4">
+        <article className="rounded-2xl border border-border bg-card p-4">
           <h2 className="text-lg font-semibold text-foreground">Report content</h2>
           <p className="mt-1 text-sm text-muted-foreground">Flag inappropriate or incorrect material.</p>
           <form className="mt-3 space-y-2" onSubmit={onReport}>

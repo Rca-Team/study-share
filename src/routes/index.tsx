@@ -1,5 +1,6 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { StudyShareLogo } from "@/components/studyshare-logo";
 import {
   fetchMaterials,
   type MaterialSort,
@@ -152,10 +153,13 @@ function HomePage() {
 
   return (
     <main className="min-h-screen pb-20">
-      <div className="section-frame pt-6 sm:pt-8">
+      <div className="section-frame relative overflow-hidden pt-6 sm:pt-8">
+        <div className="pointer-events-none absolute -left-20 -top-16 h-72 w-72 rounded-full bg-brand-pink/25 blur-3xl" />
+        <div className="pointer-events-none absolute -right-16 top-14 h-72 w-72 rounded-full bg-brand-aqua/25 blur-3xl" />
+
         <header className="glass-panel grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-xl p-3 sm:flex sm:justify-between sm:p-4">
-          <Link to="/" className="min-w-0 text-xl font-extrabold text-gradient-brand sm:text-2xl">
-            StudyShare
+          <Link to="/" className="min-w-0">
+            <StudyShareLogo compact className="gap-2" iconClassName="h-9 w-9 rounded-xl" />
           </Link>
           <div className="flex items-center gap-2">
             <button
@@ -178,23 +182,26 @@ function HomePage() {
             </Link>
             <Link
               to="/upload"
-              className="rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90 sm:text-sm"
+              className="rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-lg shadow-primary/25 hover:bg-primary/90 sm:text-sm"
             >
               Quick Upload
             </Link>
           </div>
         </header>
 
-        <section className="mt-6 grid gap-4 rounded-2xl border border-border/70 bg-card/80 p-5 shadow-sm sm:p-8">
-          <h1 className="text-balance text-3xl font-extrabold text-foreground sm:text-4xl">
-            Community study materials, open for everyone.
+        <section className="relative mt-6 grid gap-4 rounded-3xl border border-border/70 bg-card/85 p-6 shadow-sm sm:p-10">
+          <div className="mx-auto flex justify-center">
+            <StudyShareLogo className="flex-col gap-4 text-center" iconClassName="h-16 w-16" />
+          </div>
+          <h1 className="mx-auto max-w-4xl text-balance text-center text-4xl font-extrabold text-foreground sm:text-5xl">
+            Master your subjects with shared knowledge.
           </h1>
-          <p className="max-w-3xl text-sm text-muted-foreground sm:text-base">
-            Upload, search, preview, and download notes, PDFs, slides, and docs without sign in.
+          <p className="mx-auto max-w-2xl text-center text-base text-muted-foreground sm:text-lg">
+            Search, preview, upload, and download quality student resources instantly — no sign in required.
           </p>
 
-          <div className="glass-panel grid gap-3 rounded-xl p-3 sm:grid-cols-2 lg:grid-cols-6">
-            <label className="lg:col-span-2">
+          <div className="glass-panel mx-auto grid w-full max-w-5xl gap-3 rounded-2xl p-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_150px_140px_140px_180px]">
+            <label>
               <span className="sr-only">Search</span>
               <input
                 value={query}
@@ -300,7 +307,7 @@ function HomePage() {
 
 function StatsCard({ label, value }: { label: string; value: string }) {
   return (
-    <article className="glass-panel rounded-xl p-4">
+    <article className="glass-panel rounded-2xl p-4 hover-lift">
       <p className="text-xs text-muted-foreground">{label}</p>
       <p className="mt-2 text-2xl font-bold text-foreground">{value}</p>
     </article>
@@ -332,7 +339,7 @@ function MaterialGrid({ items, loading }: { items: MaterialRow[]; loading: boole
     return (
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-44 animate-pulse rounded-xl border border-border bg-muted" />
+          <div key={i} className="skeleton-shimmer h-52 rounded-2xl border border-border bg-muted" />
         ))}
       </div>
     );
@@ -353,14 +360,28 @@ function MaterialGrid({ items, loading }: { items: MaterialRow[]; loading: boole
           key={item.id}
           to="/materials/$id"
           params={{ id: item.id }}
-          className="hover-lift animate-fade-in rounded-xl border border-border bg-card p-4"
+          className="hover-lift animate-fade-in rounded-3xl border border-border bg-card/90 p-4"
         >
           <div className="mb-3 flex items-center justify-between gap-2">
-            <span className="rounded-md bg-secondary px-2 py-1 text-xs font-medium text-secondary-foreground">
+            <span className="rounded-lg bg-secondary px-2 py-1 text-xs font-medium text-secondary-foreground">
               {FILE_TYPE_LABELS[item.file_type] ?? item.file_type.toUpperCase()}
             </span>
             <span className="text-xs text-muted-foreground">{formatFileSize(item.file_size)}</span>
           </div>
+
+          <div className="mb-3 grid h-32 place-items-center overflow-hidden rounded-2xl border border-border bg-background/70">
+            {item.thumbnail_url ? (
+              <img
+                src={item.thumbnail_url}
+                alt={`${item.title} preview`}
+                loading="lazy"
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <p className="px-3 text-center text-xs text-muted-foreground">Preview unavailable</p>
+            )}
+          </div>
+
           <h3 className="line-clamp-2 text-base font-semibold text-foreground">{item.title}</h3>
           <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
             {item.description || `${item.subject} • Class ${item.class_level}`}
