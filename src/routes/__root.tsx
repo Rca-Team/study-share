@@ -78,7 +78,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "StudyShare — Free Study Material Community" },
+      { title: "StudyShare • Made by Gaurav" },
       {
         name: "description",
         content:
@@ -145,8 +145,20 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <div className="min-h-screen">
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <Outlet />
+
+        <footer className="border-t border-border/70 bg-card/70">
+          <div className="section-frame py-3 text-center text-xs text-muted-foreground sm:text-sm">
+            Made by Gaurav | Class 11-A · Developed and Designed by Gaurav (Class 11-A).
+          </div>
+        </footer>
+
+        <div className="pointer-events-none fixed bottom-3 right-3 z-50 text-xs font-medium text-foreground/20">
+          Made by Gaurav
+        </div>
+      </div>
     </QueryClientProvider>
   );
 }
