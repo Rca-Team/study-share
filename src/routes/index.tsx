@@ -1,10 +1,13 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { StudyShareLogo } from "@/components/studyshare-logo";
 import {
   fetchMaterials,
+  fetchMaterialsForAiSearch,
   type MaterialSort,
 } from "@/lib/materials-client";
+import { rankMaterialsByAi } from "@/lib/material-search.functions";
 import {
   FILE_TYPE_LABELS,
   formatCount,
@@ -44,7 +47,9 @@ function HomePage() {
   const [loading, setLoading] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
   const [recentViewedIds, setRecentViewedIds] = useState<string[]>([]);
+  const [aiReason, setAiReason] = useState("");
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const rankByAi = useServerFn(rankMaterialsByAi);
 
   useEffect(() => {
     const saved = window.localStorage.getItem("studyshare-theme");
@@ -89,7 +94,72 @@ function HomePage() {
   };
 
   useEffect(() => {
-    void load(0, true);
+    let isCancelled = false;
+
+    const runSearch = async () => {
+      const trimmedQuery = query.trim();
+      if (!trimmedQuery) {
+        setAiReason("");
+        await load(0, true);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const candidates = await fetchMaterialsForAiSearch({
+          subject: subject || undefined,
+          classLevel: classLevel || undefined,
+          fileType: fileType || undefined,
+        });
+
+        if (!candidates.length) {
+          if (!isCancelled) {
+            setMaterials([]);
+            setTotalCount(0);
+            setPage(0);
+            setHasMore(false);
+            setAiReason("No matching materials found.");
+          }
+          return;
+        }
+
+        const ranking = await rankByAi({
+          data: {
+            query: trimmedQuery,
+            candidates: candidates.map((item) => ({
+              id: item.id,
+              title: item.title,
+              description: item.description,
+              subject: item.subject,
+              classLevel: item.class_level,
+              tags: item.tags,
+              fileType: item.file_type,
+              downloads: item.downloads,
+              views: item.views,
+              createdAt: item.created_at,
+            })),
+          },
+        });
+
+        const byId = new Map(candidates.map((item) => [item.id, item]));
+        const ordered = ranking.rankedIds.map((id) => byId.get(id)).filter(Boolean) as MaterialRow[];
+
+        if (!isCancelled) {
+          setMaterials(ordered);
+          setTotalCount(ordered.length);
+          setPage(0);
+          setHasMore(false);
+          setAiReason(ranking.reason || "AI semantic ranking applied.");
+        }
+      } finally {
+        if (!isCancelled) setLoading(false);
+      }
+    };
+
+    void runSearch();
+    return () => {
+      isCancelled = true;
+    };
   }, [query, sort, subject, classLevel, fileType]);
 
   useEffect(() => {
@@ -200,13 +270,13 @@ function HomePage() {
             Search, preview, upload, and download quality student resources instantly — no sign in required.
           </p>
 
-           <div className="glass-panel mx-auto grid w-full max-w-5xl gap-3 rounded-2xl p-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_150px_140px_140px_180px]">
+          <div className="glass-panel mx-auto grid w-full max-w-5xl gap-3 rounded-2xl p-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_150px_140px_140px_180px]">
             <label>
               <span className="sr-only">Search</span>
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search title, subject, tags, class"
+                placeholder="Ask naturally: 'class 11 trigonometry notes with examples'"
                 className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none"
               />
             </label>
@@ -242,6 +312,12 @@ function HomePage() {
               placeholder="Type (pdf, docx, pptx)"
               className="rounded-lg border border-input bg-background px-3 py-2 text-sm"
             />
+
+            {query.trim() ? (
+              <p className="col-span-full rounded-lg border border-border/80 bg-card/90 px-3 py-2 text-xs text-muted-foreground">
+                AI Search: {aiReason || "Understanding your query and ranking by relevance..."}
+              </p>
+            ) : null}
           </div>
         </section>
 
