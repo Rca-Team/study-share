@@ -152,18 +152,22 @@ export async function uploadMaterial(args: {
   classLevel: string;
   tagsRaw: string;
   uploaderName?: string;
+  onProgress?: (progress: number, stage: string) => void;
 }) {
+  args.onProgress?.(8, "Validating file");
   const fileExt = normalizeFileType(args.file.name);
   const id = crypto.randomUUID();
   const path = `${id}.${fileExt}`;
   const fileType = fileExt;
 
+  args.onProgress?.(20, "Uploading file");
   const { error: uploadError } = await supabase.storage.from("materials").upload(path, args.file, {
     cacheControl: "3600",
     upsert: false,
   });
   if (uploadError) throw uploadError;
 
+  args.onProgress?.(65, "Preparing preview");
   const fileUrl = await getSignedMaterialUrl(path, 60 * 60 * 24 * 7);
   const defaultThumbnail =
     fileType === "pdf"
@@ -172,6 +176,7 @@ export async function uploadMaterial(args: {
         ? fileUrl
         : null;
 
+  args.onProgress?.(85, "Saving material details");
   const { data, error } = await supabase
     .from("materials")
     .insert({
@@ -191,6 +196,7 @@ export async function uploadMaterial(args: {
     .single();
 
   if (error) throw error;
+  args.onProgress?.(100, "Upload complete");
   return data.id as string;
 }
 
