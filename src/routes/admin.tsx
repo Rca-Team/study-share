@@ -58,7 +58,7 @@ function AdminPage() {
 
   return (
     <main className="min-h-screen pb-16">
-      <section className="section-frame mt-6 p-5 sm:p-7">
+      <section className="cyber-panel mt-6 p-5 sm:p-7">
         <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
           <div className="flex min-w-0 items-center gap-3">
             <StudyShareLogo compact className="gap-2" iconClassName="h-10 w-10 rounded-xl" />
@@ -78,13 +78,13 @@ function AdminPage() {
         </section>
 
         <section className="mt-6 grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
-          <article className="rounded-2xl border border-border bg-card/90 p-4">
+          <article className="cyber-panel rounded-xl p-4">
           <h2 className="text-lg font-semibold text-foreground">Manage uploads</h2>
           {loading ? <div className="mt-3 h-56 animate-pulse rounded-lg bg-muted" /> : null}
 
           <div className="mt-3 space-y-2">
             {materials.map((item) => (
-              <div key={item.id} className="grid gap-3 rounded-xl border border-border bg-background p-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+               <div key={item.id} className="glass-panel hover-lift grid gap-3 rounded-xl border border-border bg-background p-3 sm:grid-cols-[minmax(0,1fr)_auto]">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold text-foreground">{item.title}</p>
                   <p className="text-xs text-muted-foreground">
@@ -125,11 +125,11 @@ function AdminPage() {
           </div>
           </article>
 
-          <article className="rounded-2xl border border-border bg-card/90 p-4">
+           <article className="cyber-panel rounded-xl p-4">
           <h2 className="text-lg font-semibold text-foreground">Reports queue</h2>
           <div className="mt-3 space-y-2">
             {reports.map((report) => (
-              <div key={report.id} className="rounded-xl border border-border bg-background p-3">
+               <div key={report.id} className="glass-panel rounded-xl border border-border bg-background p-3">
                 <p className="text-sm font-semibold text-foreground">{report.materials?.title || "Deleted material"}</p>
                 <p className="mt-1 text-xs text-muted-foreground">{report.reason}</p>
                 <p className="mt-1 text-[11px] text-muted-foreground">{new Date(report.created_at).toLocaleString()}</p>

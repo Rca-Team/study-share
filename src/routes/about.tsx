@@ -24,7 +24,7 @@ export const Route = createFileRoute("/about")({
 function AboutPage() {
   return (
     <main className="min-h-screen pb-16">
-      <section className="section-frame mx-auto mt-6 max-w-5xl overflow-hidden p-6 sm:p-8">
+      <section className="cyber-panel mx-auto mt-6 max-w-5xl overflow-hidden p-6 sm:p-8">
         <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
           <StudyShareLogo compact className="gap-2" iconClassName="h-10 w-10 rounded-xl" />
           <Link
