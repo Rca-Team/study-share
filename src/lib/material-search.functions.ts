@@ -77,7 +77,9 @@ export const rankMaterialsByAi = createServerFn({ method: "POST" })
 
     const gateway = createLovableAiGatewayProvider(key);
 
-    const compactCandidates = data.candidates.slice(0, 80).map((candidate) => ({
+    const limitedCandidates = data.candidates.slice(0, 80);
+
+    const compactCandidates = limitedCandidates.map((candidate) => ({
       id: candidate.id,
       title: candidate.title,
       description: candidate.description ?? "",
@@ -110,9 +112,9 @@ export const rankMaterialsByAi = createServerFn({ method: "POST" })
         prompt,
       });
 
-      const allowed = new Set(compactCandidates.map((candidate) => candidate.id));
+      const allowed = new Set(limitedCandidates.map((candidate) => candidate.id));
       const rankedIds = output.rankedIds.filter((id) => allowed.has(id));
-      const remainingIds = compactCandidates
+      const remainingIds = limitedCandidates
         .map((candidate) => candidate.id)
         .filter((id) => !rankedIds.includes(id));
 
@@ -124,14 +126,14 @@ export const rankMaterialsByAi = createServerFn({ method: "POST" })
     } catch (error) {
       if (NoObjectGeneratedError.isInstance(error)) {
         return {
-          rankedIds: fallbackRanking(query, compactCandidates),
+          rankedIds: fallbackRanking(query, limitedCandidates),
           rewrittenQuery: query,
           reason: "AI output format fallback used.",
         };
       }
 
       return {
-        rankedIds: fallbackRanking(query, compactCandidates),
+        rankedIds: fallbackRanking(query, limitedCandidates),
         rewrittenQuery: query,
         reason: "AI unavailable, keyword fallback used.",
       };
